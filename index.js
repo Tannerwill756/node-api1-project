@@ -107,14 +107,21 @@ server.put("/api/users/:id", (req, res) => {
   const user = users.find((user) => user.id === userId);
   const index = users.indexOf(user);
 
-  if (!user) {
+  if (!res) {
     res.status(500).json({
       errorMessage: "The user information could not be modified.",
     });
   } else {
-    const updatedUser = { ...user };
-    users[index] = updatedUser;
-    res.status(200).json(updatedUser);
+    if (!user) {
+      res.status(404).json({
+        message: "The user with the specified ID does not exist.",
+      });
+    } else {
+      const updatedUser = { ...user, ...req.body };
+      users[index] = updatedUser;
+
+      res.status(200).json(updatedUser);
+    }
   }
 });
 
